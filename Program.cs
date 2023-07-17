@@ -20,36 +20,42 @@ class Program
         // Parse the json data into a new 'data object' of the type JObject from Newtonsoft lib
         JObject data = JObject.Parse(json);
 
+        // access "items" array
+
+        JArray itemsArray = (JArray)data["items"];
+
+        // So my target json is structured as an array with objects in it that has keys and values
+
         // Create a new Excel package
         using (ExcelPackage package = new ExcelPackage())
         {
             // Create a new worksheet
             ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Sheet1");
 
-            // header row
+            // header row I want to take all the objects in the items array and read each key as the header columns
             int rowIndex = 1;
             int colIndex = 1;
-            foreach (var property in data)
+            foreach (var property in itemsArray[0].ToObject<JObject>())
             {
                 worksheet.Cells[rowIndex, colIndex].Value = property.Key;
                 colIndex++;
             }
 
-            // data row doesnt work yet...
+            // data row I want to take all of the objects in the items array as new rows
             rowIndex = 2;
-            foreach (var item in data["items"])
+            foreach (var item in itemsArray)
             {
                 colIndex = 1;
-                foreach (var property in item)
+                foreach (var property in item.ToObject<JObject>())
                 {
-                    worksheet.Cells[rowIndex, colIndex].Value = property.Key;
+                    worksheet.Cells[rowIndex, colIndex].Value = property.Value;
                     colIndex++;
                 }
                 rowIndex++;
             }
 
             // Save the Excel package
-            package.SaveAs(new FileInfo("output1.xlsx"));
+            package.SaveAs(new FileInfo("output2.xlsx"));
         }
 
         Console.WriteLine("saved to output.xlsx");
