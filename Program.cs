@@ -41,21 +41,25 @@ class Program
                 colIndex++;
             }
 
-            // data row I want to take all of the objects in the items array as new rows
+            // data row I want to take all of the objects in the items array
+
+
+            // so the below wasn't working because I had to convert each value of each object into a string
             rowIndex = 2;
             foreach (var item in itemsArray)
             {
                 colIndex = 1;
                 foreach (var property in item.ToObject<JObject>())
                 {
-                    worksheet.Cells[rowIndex, colIndex].Value = property.Value;
+                    string valueString = Convert.ToString(property.Value);//convert tostring here of each property's value
+                    worksheet.Cells[rowIndex, colIndex].Value = valueString;
                     colIndex++;
                 }
                 rowIndex++;
             }
 
             // Save the Excel package
-            package.SaveAs(new FileInfo("output2.xlsx"));
+            package.SaveAs(new FileInfo("output3.xlsx"));
         }
 
         Console.WriteLine("saved to output.xlsx");
